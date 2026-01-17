@@ -1,4 +1,6 @@
 <script setup>
+import { useAuth } from '~/apis/api'
+
 useHead({
   meta: [{ name: 'viewport', content: 'width=device-width, initial-scale=1' }],
   link: [{ rel: 'icon', href: '/favicon.ico' }],
@@ -20,6 +22,8 @@ useSeoMeta({
   twitterImage: 'https://ui.nuxt.com/assets/templates/nuxt/starter-light.png',
   twitterCard: 'summary_large_image'
 })
+
+const auth = useAuth()
 </script>
 
 <template>
@@ -29,8 +33,6 @@ useSeoMeta({
         <NuxtLink to="/">
           <AppLogo class="w-auto h-6 shrink-0" />
         </NuxtLink>
-
-        <TemplateMenu />
       </template>
 
       <template #right>
@@ -44,16 +46,28 @@ useSeoMeta({
           color="neutral"
           variant="ghost"
         />
-        <UButton
-          to="/signin"
-          color="neutral"
-          variant="ghost"
-          label="Sign In"
-        />
+        <ClientOnly>
+          <UButton
+            v-if="!auth.getToken()"
+            to="/signin"
+            color="neutral"
+            variant="ghost"
+            label="Sign In"
+          />
+          <UButton
+            v-else
+            to="/dashboard"
+            color="neutral"
+            variant="ghost"
+            label="Dashboard"
+          />
+        </ClientOnly>
       </template>
     </UHeader>
 
-    <UMain>
+    <UMain
+      class="min-h-[calc(100vh-147px)]"
+    >
       <NuxtPage />
     </UMain>
 
@@ -62,19 +76,9 @@ useSeoMeta({
     <UFooter>
       <template #left>
         <p class="text-sm text-muted">
-          Built with Nuxt UI • © {{ new Date().getFullYear() }}
+          PureTCO • © {{ new Date().getFullYear() }}
+          by ryusu.id
         </p>
-      </template>
-
-      <template #right>
-        <UButton
-          to="https://github.com/nuxt-ui-templates/starter"
-          target="_blank"
-          icon="i-simple-icons-github"
-          aria-label="GitHub"
-          color="neutral"
-          variant="ghost"
-        />
       </template>
     </UFooter>
   </UApp>

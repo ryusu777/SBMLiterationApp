@@ -1,9 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using PureTCOWebApp.Features.Auth.Domain;
 
 namespace PureTCOWebApp.Features.Auth;
 
-public class AuthEntityConfiguration : IEntityTypeConfiguration<User>
+public class UserEntityConfiguration : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {
@@ -12,5 +13,31 @@ public class AuthEntityConfiguration : IEntityTypeConfiguration<User>
 
         builder.Property(u => u.ProgramStudy)
             .HasMaxLength(100);
+    }
+}
+
+public class RefreshTokenEntityConfiguration : IEntityTypeConfiguration<RefreshToken>
+{
+    public void Configure(EntityTypeBuilder<RefreshToken> builder)
+    {
+        builder.HasKey(rt => rt.Id);
+
+        builder.Property(rt => rt.Token)
+            .IsRequired()
+            .HasMaxLength(500);
+
+        builder.Property(rt => rt.Jti)
+            .IsRequired()
+            .HasMaxLength(100);
+
+        builder.HasIndex(rt => rt.Token)
+            .IsUnique();
+
+        builder.HasIndex(rt => rt.Jti);
+
+        builder.HasOne(rt => rt.User)
+            .WithMany()
+            .HasForeignKey(rt => rt.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PureTCOWebApp.Data;
 using PureTCOWebApp.Features.Auth;
+using PureTCOWebApp.Features.Auth.Domain;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -71,6 +72,11 @@ app.UseFastEndpoints();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwaggerGen();
+}
+
+{
+    await using var scope = app.Services.CreateAsyncScope();
+    await scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.MigrateAsync();
 }
 
 app.Run();

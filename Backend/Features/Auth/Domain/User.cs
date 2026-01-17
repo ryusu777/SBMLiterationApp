@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 
-namespace PureTCOWebApp.Features.Auth;
+namespace PureTCOWebApp.Features.Auth.Domain;
 
 public class User : IdentityUser<int>
 {

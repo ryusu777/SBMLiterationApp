@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using FastEndpoints;
 using Microsoft.AspNetCore.Identity;
+using PureTCOWebApp.Features.Auth.Domain;
 
 namespace PureTCOWebApp.Features.Auth.Endpoints;
 
@@ -123,8 +124,7 @@ public class GoogleAuthCallbackEndpoint : Endpoint<GoogleAuthCallbackRequest, Go
             var roles = await _userManager.GetRolesAsync(user);
 
             // Generate JWT tokens
-            var accessToken = _jwtTokenService.GenerateAccessToken(user, roles);
-            var refreshToken = _jwtTokenService.GenerateRefreshToken();
+            var (accessToken, refreshToken) = await _jwtTokenService.GenerateTokensAsync(user, roles);
 
             // Return tokens
             await Send.OkAsync(new GoogleAuthCallbackResponse
@@ -133,9 +133,6 @@ public class GoogleAuthCallbackEndpoint : Endpoint<GoogleAuthCallbackRequest, Go
                 Message = "Authentication successful",
                 AccessToken = accessToken,
                 RefreshToken = refreshToken,
-                UserId = user.Id,
-                Email = user.Email,
-                UserName = user.UserName
             }, cancellation: ct);
         }
         catch (Exception ex)
@@ -217,9 +214,6 @@ public class GoogleAuthCallbackResponse
     public string? Message { get; set; }
     public string? AccessToken { get; set; }
     public string? RefreshToken { get; set; }
-    public int? UserId { get; set; }
-    public string? Email { get; set; }
-    public string? UserName { get; set; }
 }
 
 public class GoogleTokenResponse

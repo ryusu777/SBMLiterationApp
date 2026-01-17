@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using PureTCOWebApp.Features.Auth;
+using PureTCOWebApp.Features.Auth.Domain;
 
 namespace PureTCOWebApp.Data
 {
@@ -11,6 +11,8 @@ namespace PureTCOWebApp.Data
             : base(options)
         {
         }
+
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

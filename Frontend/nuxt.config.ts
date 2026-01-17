@@ -1,7 +1,13 @@
 // load dotenv variables
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  modules: ['@nuxt/eslint', '@nuxt/ui', '@nuxt/image', '@nuxt/icon'],
+  modules: [
+    '@nuxt/eslint',
+    '@nuxt/ui',
+    '@nuxt/image',
+    '@nuxt/icon',
+    '@pinia/nuxt'
+  ],
 
   devtools: {
     enabled: true

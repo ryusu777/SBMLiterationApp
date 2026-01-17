@@ -1,6 +1,9 @@
 <script setup lang="ts">
+import { useAuth } from '~/apis/api'
+
 const route = useRoute()
 const router = useRouter()
+const authStore = useAuth()
 
 // Get authorization code and state from Google redirect
 const code = route.query.code as string
@@ -16,8 +19,7 @@ if (!code || !state) {
 
 try {
   // Send the authorization code and state to backend
-  console.log('Sending authorization code and state to backend:', { code, state })
-  const { data, status } = await useFetch('/api/v1/auth/google/callback', {
+  const { data, status } = await useFetch<{ accessToken: string, refreshToken: string }>('/api/v1/auth/google/callback', {
     method: 'POST',
     body: {
       code,
@@ -25,14 +27,16 @@ try {
     }
   })
 
-  console.log('response data', data.value, status.value)
-
   // Handle successful authorization
   // Redirect to home or dashboard
-  if (status.value === 'success')
-    router.push('/')
-  else
-    error.value = 'Authorization failed, please try again.'
+  onMounted(() => {
+    if (status.value === 'success') {
+      authStore.setToken(data.value!.accessToken)
+      authStore.setRefreshToken(data.value!.refreshToken)
+      router.push('/dashboard')
+    } else
+      error.value = 'Authorization failed, please try again.'
+  })
 } catch (err: unknown) {
   // Handle authorization error
   console.error('Authorization failed:', err)
