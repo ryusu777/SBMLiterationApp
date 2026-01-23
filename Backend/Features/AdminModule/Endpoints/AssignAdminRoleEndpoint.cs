@@ -26,6 +26,13 @@ public class AssignAdminRoleEndpoint(UserManager<User> userManager)
             return;
         }
 
+        var isAlreadyAdmin = await userManager.IsInRoleAsync(user, "Admin");
+        if (isAlreadyAdmin)
+        {
+            await Send.ResultAsync(TypedResults.BadRequest<ApiResponse>(Result.Failure(new Error("AssignAdminRole.AlreadyAdmin", "User is already an admin"))));
+            return;
+        }
+
         var result = await userManager.AddToRoleAsync(user, "admin");
         if (!result.Succeeded)
         {
