@@ -10,6 +10,7 @@ public class ReadingRecommendationEndpointGroup : Group
         {
             ep.Description(x => x.WithTags("Reading Recommendations"));
             ep.Tags("Reading Recommendation Module");
+            ep.Group<GlobalApiEndpointGroup>();
         });
     }
 }
