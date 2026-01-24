@@ -348,6 +348,12 @@ namespace PureTCOWebApp.Migrations
                         .HasColumnType("character varying(300)")
                         .HasColumnName("authors");
 
+                    b.Property<string>("CoverImageUri")
+                        .HasMaxLength(500)
+                        .IsUnicode(false)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("cover_image_uri");
+
                     b.Property<long>("CreateBy")
                         .HasColumnType("bigint")
                         .HasColumnName("create_by");
@@ -536,18 +542,40 @@ namespace PureTCOWebApp.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("user_id");
 
-                    b.Property<int>("reading_resource_id")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id")
                         .HasName("pk_mt_streak_exp");
 
                     b.HasIndex("UserId")
                         .HasDatabaseName("ix_streak_exp_user_id");
 
-                    b.HasIndex("reading_resource_id");
-
                     b.ToTable("mt_streak_exp", (string)null);
+                });
+
+            modelBuilder.Entity("PureTCOWebApp.Features.ReadingResourceModule.Domain.Entities.StreakLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateOnly>("StreakDate")
+                        .HasColumnType("date")
+                        .HasColumnName("streak_date");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_mt_streak_log");
+
+                    b.HasIndex("UserId", "StreakDate")
+                        .IsUnique()
+                        .HasDatabaseName("ix_streak_log_user_date_unique");
+
+                    b.ToTable("mt_streak_log", (string)null);
                 });
 
             modelBuilder.Entity("PureTCOWebApp.Features.ReadingResourceModule.Domain.ReadingResourceBase", b =>
@@ -583,7 +611,6 @@ namespace PureTCOWebApp.Migrations
                         .HasDefaultValueSql("(now())");
 
                     b.Property<string>("CssClass")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .IsUnicode(false)
                         .HasColumnType("character varying(100)")
@@ -655,8 +682,6 @@ namespace PureTCOWebApp.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_mt_reading_resource");
-
-                    b.HasIndex(new[] { "ISBN" }, "ix_mt_reading_resource_isbn");
 
                     b.ToTable("mt_reading_resource", (string)null);
 
@@ -814,22 +839,9 @@ namespace PureTCOWebApp.Migrations
                     b.Navigation("ReadingResource");
                 });
 
-            modelBuilder.Entity("PureTCOWebApp.Features.ReadingResourceModule.Domain.Entities.StreakExp", b =>
-                {
-                    b.HasOne("PureTCOWebApp.Features.ReadingResourceModule.Domain.ReadingResourceBase", "ReadingResource")
-                        .WithMany("StreakExps")
-                        .HasForeignKey("reading_resource_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ReadingResource");
-                });
-
             modelBuilder.Entity("PureTCOWebApp.Features.ReadingResourceModule.Domain.ReadingResourceBase", b =>
                 {
                     b.Navigation("ReadingReports");
-
-                    b.Navigation("StreakExps");
                 });
 #pragma warning restore 612, 618
         }

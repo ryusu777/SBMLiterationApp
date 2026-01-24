@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using PureTCOWebApp.Core.Events;
 using PureTCOWebApp.Core.Models;
 
 namespace PureTCOWebApp.Data;
@@ -8,10 +9,12 @@ public class UnitOfWork
 {
     private readonly ApplicationDbContext _dbContext;
     private int _transactionCount;
+    private readonly DomainEventsDispatcher domainEventsDispatcher;
 
-    public UnitOfWork(ApplicationDbContext dbContext)
+    public UnitOfWork(ApplicationDbContext dbContext, DomainEventsDispatcher domainEventsDispatcher)
     {
         _dbContext = dbContext;
+        this.domainEventsDispatcher = domainEventsDispatcher;
         _transactionCount = 0;
     }
 
@@ -56,6 +59,7 @@ public class UnitOfWork
         {
             await BeginTransactionAsync(cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
+            await PublishDomainEventsAsync();
             await CommitTransactionAsync(cancellationToken);
             return Result.Success();
         }
@@ -78,5 +82,22 @@ public class UnitOfWork
             return Result
                 .Failure(new Error("DbSaveException", e.InnerException?.Message ?? e.Message));
         }
+    }
+    private async Task PublishDomainEventsAsync()
+    {
+        var domainEvents = _dbContext.ChangeTracker
+            .Entries<AuditableEntity>()
+            .Select(entry => entry.Entity)
+            .SelectMany(entity =>
+            {
+                List<IDomainEvent> domainEvents = entity.DomainEvents;
+
+                entity.ClearDomainEvents();
+
+                return domainEvents;
+            })
+            .ToList();
+
+        await domainEventsDispatcher.DispatchAsync(domainEvents);
     }
 }

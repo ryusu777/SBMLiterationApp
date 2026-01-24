@@ -20,25 +20,19 @@ onMounted(() => {
 const items: NavigationMenuItem[] = [{
   label: 'Home',
   icon: 'i-lucide-house',
-  active: true
+  to: '/admin'
 }, {
-  label: 'Inbox',
-  icon: 'i-lucide-inbox',
-  badge: '4'
+  label: 'Book Categories',
+  icon: 'i-lucide-chart-column-stacked',
+  to: '/admin/categories'
 }, {
-  label: 'Contacts',
-  icon: 'i-lucide-users'
+  label: 'Book Recommendation',
+  icon: 'i-lucide-album',
+  to: '/admin/recommendation'
 }, {
-  label: 'Settings',
-  icon: 'i-lucide-settings',
-  defaultOpen: true,
-  children: [{
-    label: 'General'
-  }, {
-    label: 'Members'
-  }, {
-    label: 'Notifications'
-  }]
+  label: 'Users',
+  icon: 'i-lucide-users',
+  to: '/admin/users'
 }]
 </script>
 
@@ -52,6 +46,9 @@ const items: NavigationMenuItem[] = [{
       <UDashboardSidebar
         collapsible
         resizable
+        :min-size="19"
+        :default-size="20"
+        :max-size="24"
         :ui="{ footer: 'border-t border-default' }"
       >
         <template #header="{ collapsed }">
@@ -69,31 +66,6 @@ const items: NavigationMenuItem[] = [{
         </template>
 
         <template #default="{ collapsed }">
-          <UButton
-            :label="collapsed ? undefined : 'Search...'"
-            icon="i-lucide-search"
-            color="neutral"
-            variant="outline"
-            block
-            :square="collapsed"
-          >
-            <template
-              v-if="!collapsed"
-              #trailing
-            >
-              <div class="flex items-center gap-0.5 ms-auto">
-                <UKbd
-                  value="meta"
-                  variant="subtle"
-                />
-                <UKbd
-                  value="K"
-                  variant="subtle"
-                />
-              </div>
-            </template>
-          </UButton>
-
           <UNavigationMenu
             :collapsed="collapsed"
             :items="items"

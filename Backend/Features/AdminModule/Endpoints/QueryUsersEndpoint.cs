@@ -1,0 +1,76 @@
+using FastEndpoints;
+using Microsoft.AspNetCore.Identity;
+using PureTCOWebApp.Core.Paging;
+using PureTCOWebApp.Features.Auth.Domain;
+
+namespace PureTCOWebApp.Features.AdminModule.Endpoints;
+
+public record QueryUsersRequest(
+    string? Email = null,
+    string? UserName = null,
+    string? Nim = null,
+    string? ProgramStudy = null,
+    List<string>? Roles = null
+) : PagingQuery;
+
+public record QueryUsersResponse(
+    int Id,
+    string? UserName,
+    string? Email,
+    string? Nim,
+    string? ProgramStudy,
+    List<string> Roles
+);
+
+public class QueryUsersEndpoint(UserManager<User> userManager)
+    : Endpoint<QueryUsersRequest, PagingResult<QueryUsersResponse>>
+{
+    public override void Configure()
+    {
+        Get("");
+        Group<AdminEndpointGroup>();
+    }
+
+    public override async Task HandleAsync(QueryUsersRequest req, CancellationToken ct)
+    {
+        var query = userManager.Users.AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(req.Email))
+            query = query.Where(u => u.Email!.Contains(req.Email));
+
+        if (!string.IsNullOrWhiteSpace(req.UserName))
+            query = query.Where(u => u.UserName!.Contains(req.UserName));
+
+        if (!string.IsNullOrWhiteSpace(req.Nim))
+            query = query.Where(u => u.Nim.Contains(req.Nim));
+
+        if (!string.IsNullOrWhiteSpace(req.ProgramStudy))
+            query = query.Where(u => u.ProgramStudy.Contains(req.ProgramStudy));
+
+        if (req.Roles != null && req.Roles.Count > 0)
+        {
+            var userIds = new List<int>();
+            foreach (var role in req.Roles)
+            {
+                var usersInRole = await userManager.GetUsersInRoleAsync(role);
+                userIds.AddRange(usersInRole.Select(u => u.Id));
+            }
+            query = query.Where(u => userIds.Contains(u.Id));
+        }
+
+        var result = await PagingService.PaginateQueryAsync(query, req, user =>
+        {
+            var roles = userManager.GetRolesAsync(user).Result;
+            return new QueryUsersResponse(
+                user.Id,
+                user.UserName,
+                user.Email,
+                user.Nim,
+                user.ProgramStudy,
+                [.. roles]
+            );
+        }, ct);
+
+        await Send.OkAsync(result, ct);
+    }
+}
