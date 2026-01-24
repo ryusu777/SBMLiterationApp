@@ -11,6 +11,7 @@ export interface UserProfile {
   programStudy: string
   faculty: string
   generationYear: string
+  pictureUrl?: string
 }
 
 const profile = ref<UserProfile | null>(null)
@@ -86,7 +87,6 @@ const color = useColorMode()
 
 const links = ref<ButtonProps[]>([
   {
-    label: 'Logout',
     variant: 'soft',
     color: 'error',
     icon: 'i-heroicons-arrow-right-on-rectangle',
@@ -115,6 +115,7 @@ function toggleColorMode() {
     <UContainer>
       <div class="flex flex-col space-y-6">
         <UPageHeader
+          class="flex-1"
           :ui="{
             wrapper: 'flex flex-row justify-between'
           }"
@@ -134,6 +135,10 @@ function toggleColorMode() {
               v-for="(link, index) in links"
               :key="index"
               v-bind="link"
+            />
+            <UAvatar
+              :src="profile?.pictureUrl"
+              size="2xl"
             />
           </template>
         </UPageHeader>

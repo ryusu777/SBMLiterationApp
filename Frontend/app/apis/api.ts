@@ -144,6 +144,8 @@ export const useAuth = defineStore('auth', () => {
   function getFullname() {
     const jwtClaims = token.value ? parseJwt(token.value) : null
 
+    if (jwtClaims === null) return null
+
     if ('given_name' in jwtClaims) {
       return jwtClaims['given_name'] as string
     }

@@ -88,7 +88,7 @@ async function addToReadList(book: { id: number }) {
       <div class="flex flex-col mt-[15px]">
         <div class="flex flex-col justify-between mb-[10px]">
           <h1
-            class="text-[13px] sm:text-[15px] tracking-tight font-bold line-clamp-1 leading-none text-left"
+            class="text-[13px] sm:text-[15px] tracking-tight font-bold line-clamp-1 leading-none text-left max-w-[178px] sm:max-w-[240px]"
           >
             {{ book.title }}
           </h1>
