@@ -28,11 +28,17 @@ defineProps<{
         v-if="withImage"
         class="w-[80px] sm:w-[110px] aspect-[3/4] shrink-0 overflow-hidden rounded-[12px]"
       >
-        <img
+        <img v-if="report.imageUrl"
           :src="report.imageUrl"
           alt="Book Cover"
           class="w-full h-full object-cover"
         />
+        <div v-else class="w-full h-full border-2 border-primary bg-white rounded-[12px] flex items-center justify-center text-primary">
+          <UIcon
+          name="i-heroicons-book-open"
+          class="size-14"
+        />
+        </div>
       </div>
 
       <div class="flex flex-col">
@@ -69,7 +75,7 @@ defineProps<{
               >
                 Total Spent
               </p>
-              <p class="font-semibold text-fire text-[11px] sm:text-[13px]">
+              <p class="font-semibold text-primary text-[11px] sm:text-[13px] text-primary">
                 {{ report.timeSpent }}
               </p>
             </div>
@@ -85,7 +91,7 @@ defineProps<{
               >
                 Read Date
               </p>
-              <p class="font-semibold text-fire text-[11px] sm:text-[13px]">
+              <p class="font-semibold text-primary text-[11px] sm:text-[13px] text-primary">
                 {{ report.readDate }}
               </p>
             </div>
@@ -97,7 +103,7 @@ defineProps<{
               Page Progress
             </p>
             <p
-              class="font-semibold text-white py-1 px-2 sm:px-3 sm:py-1 bg-fire rounded-full text-[10px] sm:text-[12px]"
+              class="font-semibold  py-1 px-2 sm:px-3 sm:py-1 bg-primary rounded-full text-[10px] sm:text-[12px]"
             >
               {{ report.currentPage }}/{{ report.totalPage }}
             </p>
