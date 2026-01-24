@@ -2,8 +2,9 @@
 import AboutHero from '~/components/home/AboutHero.vue'
 import ExploreHero from '~/components/home/ExploreHero.vue'
 import FaqHero from '~/components/home/FaqHero.vue'
-import HeaderHero from '~/components/home/HeaderHero.vue'
+// import HeaderHero from '~/components/home/HeaderHero.vue'
 import HighlightHero from '~/components/home/HighlightHero.vue'
+import HomeHero from '~/components/home/HomeHero.vue'
 
 definePageMeta({
   layout: 'landing'
@@ -11,12 +12,11 @@ definePageMeta({
 </script>
 
 <template>
-  <UContainer>
-    <HeaderHero />
+  <HomeHero/>
+    <!-- <HeaderHero /> -->
     <HighlightHero />
 
     <AboutHero />
     <ExploreHero />
     <FaqHero />
-  </UContainer>
 </template>
