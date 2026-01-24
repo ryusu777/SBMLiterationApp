@@ -59,6 +59,16 @@ export function $authedFetch<T>(
   })
 }
 
+export function useBackendFetch<T>(
+  request: Parameters<typeof $fetch<T>>[0],
+  opts?: Parameters<typeof $fetch<T>>[1]
+) {
+  return useFetch(request, {
+    ...opts,
+    $fetch: useNuxtApp().$backendApi as typeof $fetch
+  })
+}
+
 export const useAuth = defineStore('auth', () => {
   const token = ref<string | null>(null)
   const refreshToken = ref<string | null>(null)
