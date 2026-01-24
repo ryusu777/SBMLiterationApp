@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { $authedFetch, handleResponseError } from '~/apis/api'
+import { $authedFetch, handleResponseError, useAuth } from '~/apis/api'
 import type { PagingResult } from '~/apis/paging'
 import ReadingRecomendationList from '~/components/home/Recomendation/ReadingRecomendationList.vue'
 import ReadingReportList from '~/components/reading-passport/ReadingReportList.vue'
@@ -18,6 +18,7 @@ definePageMeta({
 const booksRef = useTemplateRef<typeof ReadingResources>('books')
 const journalsRef = useTemplateRef<typeof ReadingResources>('journals')
 const recommendation = useTemplateRef<typeof ReadingRecomendationList>('recommendation')
+const auth = useAuth()
 
 const readingReports = ref<ReadingReportData[]>([])
 const reportPending = ref(false)
@@ -87,11 +88,8 @@ const tabs = [
             <div class="flex flex-col md:flex-row md:space-x-2">
               <h1 class="text-[36px] font-extrabold tracking-tighter">
                 Welcome,
-              </h1>
-              <h1
-                class="text-[36px] font-extrabold tracking-tighter leading-none"
-              >
-                Budi
+
+                {{ auth.getFullname() }}
               </h1>
             </div>
           </template>
@@ -155,6 +153,7 @@ const tabs = [
 
       <ReadingReportList
         v-else
+        dashboard
         :reports="readingReports"
       />
     </div>

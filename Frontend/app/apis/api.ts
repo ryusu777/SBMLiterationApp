@@ -141,6 +141,15 @@ export const useAuth = defineStore('auth', () => {
     return JSON.parse(decodedPayload)
   }
 
+  function getFullname() {
+    const jwtClaims = token.value ? parseJwt(token.value) : null
+
+    if ('given_name' in jwtClaims) {
+      return jwtClaims['given_name'] as string
+    }
+    return null
+  }
+
   function getRoles() {
     const jwtClaims = token.value ? parseJwt(token.value) : null
 
@@ -159,7 +168,8 @@ export const useAuth = defineStore('auth', () => {
     setRefreshToken,
     refreshToken,
     token,
-    getRoles
+    getRoles,
+    getFullname
   }
 })
 

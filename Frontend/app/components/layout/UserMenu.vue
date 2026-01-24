@@ -10,7 +10,7 @@ const auth = useAuth()
 const router = useRouter()
 
 const user = ref({
-  name: 'Benjamin Canac',
+  name: auth.getFullname() || 'User',
   avatar: {
     src: 'https://github.com/benjamincanac.png',
     alt: 'Benjamin Canac'
