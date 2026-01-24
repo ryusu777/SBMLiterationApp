@@ -19,7 +19,7 @@ defineProps<{
   <UCard
     class=""
     :ui="{
-      root: 'ring ring-[#EDEDED] bg-white rounded-[12px] max-w-3xl col-span-12 lg:col-span-6',
+      root: 'ring ring-[#EDEDED] bg-white rounded-[20px] max-w-3xl col-span-12 lg:col-span-6',
       body: 'p-2 sm:p-2  ',
     }"
   >

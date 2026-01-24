@@ -5,16 +5,23 @@
     <UContainer>
       <div class="flex flex-col space-y-[32px]">
         <div class="flex flex-col md:flex-row">
-          <UPageHeader class="border-none">
+          <UPageHeader
+            class="border-none"
+            :ui="{
+              root: 'w-full',
+            }"
+          >
             <template #title>
-              <h1 class="text-[36px] font-extrabold tracking-tighter">
-                Welcome,
-              </h1>
-              <h1
-                class="text-[36px] font-extrabold tracking-tighter leading-none"
-              >
-                Budi
-              </h1>
+              <div class="flex flex-col md:flex-row md:space-x-2">
+                <h1 class="text-[36px] font-extrabold tracking-tighter">
+                  Welcome,
+                </h1>
+                <h1
+                  class="text-[36px] font-extrabold tracking-tighter leading-none"
+                >
+                  Budi
+                </h1>
+              </div>
             </template>
 
             <template #description>
@@ -32,10 +39,10 @@
             :items="tabs"
             class="max-w-[300px] mt-[20px] mb-[30px] mx-auto md:mx-0 md:mr-auto"
             :ui="{
-              indicator: 'bg-fire  ',
-              leadingIcon: 'text-white',
-              trigger: 'text-red-500',
-              list: 'bg-[#FCE3E1]',
+              indicator: 'bg-primary  ',
+              leadingIcon: '',
+              trigger: 'text-primary',
+              list: ' ',
             }"
           />
           <ReadingResources :resources="resources" />

@@ -16,7 +16,7 @@ defineProps<{
   <UCard
     class=""
     :ui="{
-      root: 'ring ring-0 border border-[#D1D1D1] bg-white rounded-[12px] w-fit',
+      root: 'ring ring-0 border border-[#D1D1D1] bg-white rounded-[22px] w-fit',
       body: 'p-2 sm:p-2  ',
     }"
   >
@@ -25,7 +25,7 @@ defineProps<{
         class="w-[178px] sm:w-[240px] aspect-[3/4] shrink-0 overflow-hidden rounded-[12px] relative"
       >
         <div
-          class="absolute right-3 top-3 bg-red-500 w-fit h-fit text-white tracking-tight font-semibold px-2 py-1 rounded-lg text-[12px]"
+          class="absolute right-3 top-3 bg-primary w-fit h-fit tracking-tight font-semibold px-2 py-1 rounded-lg text-[12px]"
         >
           {{ book.xp }}xp
         </div>
@@ -78,7 +78,7 @@ defineProps<{
         </div>
         <div>
           <UButton
-            class="w-full font-semibold rounded-full text-center bg-fire text-[13px] text-white"
+            class="w-full font-semibold rounded-full text-center bg-primary text-[13px] justify-center"
           >
             Add to Read List
           </UButton>

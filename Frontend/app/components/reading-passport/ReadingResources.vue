@@ -5,10 +5,14 @@
     grabCursor
     class="w-full max-w-[300px] sm:max-w-[330px]"
   >
-    <SwiperSlide v-for="res in resources" :key="res.title" class="rounded-xl">
+    <SwiperSlide
+      v-for="res in resources"
+      :key="res.title"
+      class="rounded-[36px] overflow-hidden"
+    >
       <UCard
         variant="unstyled"
-        class="bg-[#3566CD] rounded-[21px]"
+        class="bg-[#3566CD] rounded-[36px] aspect-[2/3] py-4 px-3 flex flex-col justify-between"
         :ui="{
           root: '',
         }"
@@ -18,12 +22,12 @@
             <UPageHeader
               :title="res.title"
               :ui="{
-                title: 'text-white max-h-[120px] line-clamp-3 ',
+                title: 'text-white max-h-[120px]   line-clamp-3 ',
               }"
               class="flex-1 border-0 p-0"
             />
 
-            <UPopover>
+            <UPopover class="">
               <UButton
                 color="white"
                 variant="ghost"
@@ -61,9 +65,9 @@
         </template>
       </UCard>
     </SwiperSlide>
-    <SwiperSlide>
+    <SwiperSlide class="aspect-[2/3] rounded-[36px] overflow-hidden">
       <div
-        class="w-full min-h-[370px] border-5 border-[#3566CD] rounded-2xl bg-white flex flex-col items-center justify-center gap-4 text-[#3566CD]"
+        class="w-full h-full border-5 border-[#3566CD] rounded-[36px] bg-white flex flex-col items-center justify-center gap-4 text-[#3566CD]"
       >
         <UIcon name="i-heroicons-plus" class="size-16" />
 
@@ -96,3 +100,11 @@ defineProps<{
   }[];
 }>();
 </script>
+
+<style>
+.swiper-slide-shadow-cards {
+  /* background: transparent !important;
+  opacity: 0 !important; */
+  border-radius: 36px !important;
+}
+</style>
