@@ -77,6 +77,7 @@ public class CreateReadingRecommendationEndpoint(
     {
         Post("");
         Group<ReadingRecommendationEndpointGroup>();
+        Roles("admin");
     }
 
     public override async Task HandleAsync(CreateReadingRecommendationRequest req, CancellationToken ct)

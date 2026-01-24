@@ -90,6 +90,15 @@ public class CreateBookEndpoint(
     {
         var userId = int.Parse(User.FindFirst("sub")!.Value);
 
+        if (
+            await _dbContext.Books.AnyAsync(b => b.UserId == userId && (b.ISBN == req.ISBN), ct)
+        )
+        {
+            await Send.ResultAsync(TypedResults.Conflict<ApiResponse>(
+                Result.Failure(new Error("Conflict", "You have already added this book"))));
+            return;
+        }
+
         var book = Book.Create(
             userId,
             req.Title,

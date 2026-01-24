@@ -2,7 +2,6 @@ using FastEndpoints;
 using PureTCOWebApp.Core;
 using PureTCOWebApp.Core.Models;
 using PureTCOWebApp.Data;
-using PureTCOWebApp.Features.ReadingCategoryModule.Domain;
 
 namespace PureTCOWebApp.Features.ReadingCategoryModule.Endpoints;
 
@@ -17,7 +16,6 @@ public class GetReadingCategoryByIdEndpoint(ApplicationDbContext dbContext)
     {
         Get("{id}");
         Group<ReadingCategoryEndpointGroup>();
-        AllowAnonymous();
     }
 
     public override async Task HandleAsync(GetReadingCategoryByIdRequest req, CancellationToken ct)

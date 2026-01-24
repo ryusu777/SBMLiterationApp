@@ -2,6 +2,14 @@
 import { z } from 'zod'
 import type { FormSubmitEvent } from '#ui/types'
 import { $authedFetch, handleResponseError } from '~/apis/api'
+import type { PagingResult } from '~/apis/paging'
+import GoogleBooksSearchModal from '~/components/recommendation/GoogleBooksSearchModal.vue'
+import type { GoogleBookVolume } from '~/components/recommendation/GoogleBooksSearchModal.vue'
+
+interface ReadingCategory {
+  id: number
+  categoryName: string
+}
 
 const props = defineProps<{
   loading?: boolean
@@ -33,13 +41,50 @@ const state = reactive({
   authors: [''],
   publishYear: '',
   readingCategory: '',
+  customCategory: '',
   page: NaN,
   resourceLink: '',
   coverImageUri: ''
 })
 
+const categories = ref<ReadingCategory[]>([])
+const categoriesLoading = ref(false)
 const uploading = ref(false)
 const toast = useToast()
+const googleBooksModal = useTemplateRef<typeof GoogleBooksSearchModal>('googleBooksModal')
+
+const categoryOptions = computed(() => [
+  ...categories.value.map(cat => ({
+    value: cat.categoryName,
+    label: cat.categoryName
+  })),
+  { value: 'Other', label: 'Other (Custom)' }
+])
+
+const isCustomCategory = computed(() => state.readingCategory === 'Other')
+
+async function fetchCategories() {
+  try {
+    categoriesLoading.value = true
+    const response = await $authedFetch<PagingResult<ReadingCategory>>('/reading-categories', {
+      query: {
+        page: 1,
+        pageSize: 100
+      }
+    })
+    if (response.rows) {
+      categories.value = response.rows
+    }
+  } catch (err) {
+    handleResponseError(err)
+  } finally {
+    categoriesLoading.value = false
+  }
+}
+
+onMounted(() => {
+  fetchCategories()
+})
 
 const emit = defineEmits<{
   (
@@ -64,7 +109,17 @@ function setState(data: Partial<ReadingResourceSchema>) {
   if (data.authors !== undefined)
     state.authors = data.authors.length > 0 ? data.authors : ['']
   if (data.publishYear !== undefined) state.publishYear = data.publishYear
-  if (data.readingCategory !== undefined) state.readingCategory = data.readingCategory
+  if (data.readingCategory !== undefined) {
+    // Check if category exists in options, otherwise set to 'Other'
+    const categoryExists = categories.value.some(cat => cat.categoryName === data.readingCategory)
+    if (categoryExists) {
+      state.readingCategory = data.readingCategory
+      state.customCategory = ''
+    } else {
+      state.readingCategory = 'Other'
+      state.customCategory = data.readingCategory
+    }
+  }
   if (data.page !== undefined) state.page = data.page
   if (data.resourceLink !== undefined) state.resourceLink = data.resourceLink
   if (data.coverImageUri !== undefined) state.coverImageUri = data.coverImageUri
@@ -76,6 +131,7 @@ function resetState() {
   state.authors = ['']
   state.publishYear = ''
   state.readingCategory = ''
+  state.customCategory = ''
   state.page = NaN
   state.resourceLink = ''
   state.coverImageUri = ''
@@ -125,9 +181,47 @@ defineExpose({
   resetState
 })
 
+function openGoogleBooksSearch() {
+  googleBooksModal.value?.open()
+}
+
+function handleBookSelection(book: GoogleBookVolume) {
+  const isbn = book.volumeInfo.industryIdentifiers?.find(
+    id => id.type === 'ISBN_13' || id.type === 'ISBN_10'
+  )?.identifier || ''
+
+  state.title = book.volumeInfo.title || ''
+  state.isbn = isbn
+  state.authors = book.volumeInfo.authors && book.volumeInfo.authors.length > 0
+    ? book.volumeInfo.authors
+    : ['']
+  state.publishYear = book.volumeInfo.publishedDate?.substring(0, 4) || ''
+
+  // Handle category selection
+  const bookCategory = book.volumeInfo.categories?.[0] || ''
+  const categoryExists = categories.value.some(cat => cat.categoryName === bookCategory)
+  if (categoryExists && bookCategory) {
+    state.readingCategory = bookCategory
+    state.customCategory = ''
+  } else if (bookCategory) {
+    state.readingCategory = 'Other'
+    state.customCategory = bookCategory
+  }
+
+  state.page = book.volumeInfo.pageCount || 0
+  state.resourceLink = book.volumeInfo.previewLink || book.volumeInfo.infoLink || ''
+  state.coverImageUri = book.volumeInfo.imageLinks?.thumbnail || book.volumeInfo.imageLinks?.smallThumbnail || ''
+
+  toast.add({
+    title: 'Book details imported from Google Books',
+    color: 'success'
+  })
+}
+
 async function onSubmit(event: FormSubmitEvent<ReadingResourceSchema>) {
   emit('submit', {
     ...event.data,
+    readingCategory: isCustomCategory.value ? state.customCategory : event.data.readingCategory,
     authors: event.data.authors
       .map(author => author.trim())
       .filter(author => author.length > 0)
@@ -150,6 +244,30 @@ async function onSubmit(event: FormSubmitEvent<ReadingResourceSchema>) {
       class="space-y-6"
       @submit="onSubmit"
     >
+      <!-- Google Books Search - only for books -->
+      <div
+        v-if="!journal"
+        class="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700"
+      >
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="font-medium text-sm text-gray-900 dark:text-gray-100">
+              Import from Google Books
+            </p>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              Search and autofill book details from Google Books API
+            </p>
+          </div>
+          <UButton
+            type="button"
+            icon="i-heroicons-magnifying-glass"
+            @click="openGoogleBooksSearch"
+          >
+            Search Books
+          </UButton>
+        </div>
+      </div>
+
       <!-- Title field - full width -->
       <UFormField
         label="Title"
@@ -253,14 +371,17 @@ async function onSubmit(event: FormSubmitEvent<ReadingResourceSchema>) {
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
         <UFormField
           label="Book Category"
-          name="bookCategory"
+          name="readingCategory"
           required
         >
-          <UInput
-            v-model="state.readingCategory"
-            placeholder="Enter book category"
+          <USelectMenu
+            :model-value="categoryOptions.find(opt => opt.value === state.readingCategory)"
+            :items="categoryOptions"
+            :loading="categoriesLoading"
+            placeholder="Select book category"
             size="lg"
             class="w-full"
+            @update:model-value="(selected) => state.readingCategory = selected.value"
           />
         </UFormField>
 
@@ -278,6 +399,21 @@ async function onSubmit(event: FormSubmitEvent<ReadingResourceSchema>) {
           />
         </UFormField>
       </div>
+
+      <!-- Custom Category Input - shown when Other is selected -->
+      <UFormField
+        v-if="isCustomCategory"
+        label="Custom Category"
+        name="customCategory"
+        required
+      >
+        <UInput
+          v-model="state.customCategory"
+          placeholder="Enter custom category name"
+          size="lg"
+          class="w-full"
+        />
+      </UFormField>
 
       <!-- Resource Link - full width -->
       <UFormField
@@ -372,4 +508,9 @@ async function onSubmit(event: FormSubmitEvent<ReadingResourceSchema>) {
       </div>
     </UForm>
   </UCard>
+
+  <GoogleBooksSearchModal
+    ref="googleBooksModal"
+    @select="handleBookSelection"
+  />
 </template>

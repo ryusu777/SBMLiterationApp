@@ -76,6 +76,7 @@ public class UpdateReadingRecommendationEndpoint(
     {
         Put("{id}");
         Group<ReadingRecommendationEndpointGroup>();
+        Roles("admin");
     }
 
     public override async Task HandleAsync(UpdateReadingRecommendationRequest req, CancellationToken ct)

@@ -12,7 +12,8 @@ namespace PureTCOWebApp.Features.ReadingResourceModule.Endpoints.ReadingReportEn
 public record CreateReadingReportRequest(
     int ReadingResourceId,
     int CurrentPage,
-    string Insight);
+    string Insight,
+    int TimeSpent);
 
 public class CreateReadingReportValidator : AbstractValidator<CreateReadingReportRequest>
 {
@@ -31,6 +32,10 @@ public class CreateReadingReportValidator : AbstractValidator<CreateReadingRepor
             .WithMessage("Insight is required.")
             .MaximumLength(1000)
             .WithMessage("Insight must not exceed 1000 characters.");
+
+        RuleFor(x => x.TimeSpent)
+            .GreaterThan(0)
+            .WithMessage("Time spent must be greater than 0 minutes.");
     }
 }
 
@@ -58,11 +63,26 @@ public class CreateReadingReportEndpoint(ApplicationDbContext context, UnitOfWor
             return;
         }
 
+        // Validate: CurrentPage must be >= latest CurrentPage
+        var latestReport = await context.ReadingReports
+            .Where(r => r.UserId == userId && r.ReadingResourceId == req.ReadingResourceId)
+            .OrderByDescending(r => r.CreateTime)
+            .FirstOrDefaultAsync(ct);
+
+        if (latestReport != null && req.CurrentPage < latestReport.CurrentPage)
+        {
+            var error = new Error("InvalidCurrentPage", 
+                $"Current page ({req.CurrentPage}) must be greater than or equal to the latest page ({latestReport.CurrentPage}).");
+            await Send.ResultAsync(TypedResults.BadRequest<ApiResponse>(Result.Failure(error)));
+            return;
+        }
+
         var report = ReadingReport.Create(
             userId,
             req.ReadingResourceId,
             req.CurrentPage,
-            req.Insight);
+            req.Insight,
+            req.TimeSpent);
 
         context.ReadingReports.Add(report);
         var result = await unitOfWork.SaveChangesAsync(ct);

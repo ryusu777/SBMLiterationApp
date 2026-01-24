@@ -93,6 +93,7 @@ async function handleSubmit(
               <UIcon
                 name="i-heroicons-book-open"
                 class="size-14"
+                @click="useRouter().back()"
               />
             </div>
 

@@ -15,7 +15,6 @@ public class QueryReadingCategoryEndpoint(ApplicationDbContext dbContext)
     {
         Get("");
         Group<ReadingCategoryEndpointGroup>();
-        AllowAnonymous();
     }
 
     public override async Task HandleAsync(QueryReadingCategoryRequest req, CancellationToken ct)

@@ -16,6 +16,7 @@ public class DeleteReadingRecommendationEndpoint(
     {
         Delete("{id}");
         Group<ReadingRecommendationEndpointGroup>();
+        Roles("admin");
     }
 
     public override async Task HandleAsync(DeleteReadingRecommendationRequest req, CancellationToken ct)

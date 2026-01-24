@@ -20,7 +20,7 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
   runtimeConfig: {
     public: {
-      backendApiUri: process.env.BACKEND_API_URI || 'http://localhost:8000/api'
+      backendApiUri: process.env.BACKEND_API_URI || 'http://ryusu.macbook:8000/api'
     }
   },
 

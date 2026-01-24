@@ -7,8 +7,8 @@ using PureTCOWebApp.Features.ReadingResourceModule.Domain;
 using PureTCOWebApp.Features.ReadingResourceModule.Domain.Entities;
 using PureTCOWebApp.Features.ReadingCategoryModule.Domain;
 using PureTCOWebApp.Features.ReadingRecommendationModule.Domain;
+using PureTCOWebApp.Features.StreakModule.Domain;
 using PureTCOWebApp.Core.Events;
-using PureTCOWebApp.Core.Models;
 
 namespace PureTCOWebApp.Data;
 public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, int>

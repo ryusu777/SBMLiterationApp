@@ -1,3 +1,105 @@
+<script setup lang="ts">
+import { $authedFetch, handleResponseError } from '~/apis/api'
+import type { PagingResult } from '~/apis/paging'
+import ReadingRecomendationList from '~/components/home/Recomendation/ReadingRecomendationList.vue'
+import ReadingReportList from '~/components/reading-passport/ReadingReportList.vue'
+import type { ReadingReportData } from '~/components/reading-passport/ReadingReportList.vue'
+import ReadingResources from '~/components/reading-passport/ReadingResources.vue'
+import Streak from '~/components/reading-passport/Streak.vue'
+
+// definePageMeta({
+//   middleware: 'auth'
+// })
+
+definePageMeta({
+  keepalive: true
+})
+
+const getCurrentWeekDates = () => {
+  const week = []
+  const today = new Date()
+  const currentDay = today.getDay()
+  const startOfWeek = new Date(today)
+  startOfWeek.setDate(today.getDate() - currentDay)
+
+  for (let i = 0; i < 7; i++) {
+    const date = new Date(startOfWeek)
+    date.setDate(startOfWeek.getDate() + i)
+    week.push({
+      date: date,
+      day: date.toLocaleDateString('en-US', { weekday: 'long' }),
+      isStreak: Math.random() > 0.5 // Replace with actual streak logic
+    })
+  }
+  return week
+}
+
+const weekDates = ref<
+  {
+    date: Date
+    day: string
+    isStreak: boolean
+  }[]
+>([])
+
+const booksRef = useTemplateRef<typeof ReadingResources>('books')
+const journalsRef = useTemplateRef<typeof ReadingResources>('journals')
+const recommendation = useTemplateRef<typeof ReadingRecomendationList>('recommendation')
+
+const readingReports = ref<ReadingReportData[]>([])
+const reportPending = ref(false)
+async function fetchReport() {
+  try {
+    reportPending.value = true
+    const response = await $authedFetch<PagingResult<ReadingReportData>>('/reading-resources/reports', {
+      query: {
+        page: 1,
+        pageSize: 100
+      }
+    })
+    if (response.rows) {
+      readingReports.value = response.rows
+    }
+  } catch (err) {
+    handleResponseError(err)
+  } finally {
+    reportPending.value = false
+  }
+}
+
+function fetchReadingResources() {
+  booksRef.value?.fetch()
+  journalsRef.value?.fetch()
+}
+
+function fetchRecommendation() {
+  recommendation.value?.fetch()
+}
+
+onMounted(async () => {
+  weekDates.value = getCurrentWeekDates()
+
+  await fetchReport()
+})
+
+onUpdated(async () => {
+  await fetchReport()
+})
+
+const tabs = [
+  {
+    label: 'Books',
+    icon: 'i-lucide-book',
+    slot: 'books'
+  },
+  {
+    label: 'Research Article',
+    icon: 'i-lucide-form',
+    slot: 'journal-paper'
+  }
+]
+</script>
+
 <template>
   <div
     class="max-w-[1200px] mx-auto flex flex-col items-center justify-center gap-4 p-4 h-full"
@@ -43,12 +145,16 @@
             class="max-w-[300px] mt-[20px] mb-[30px] mx-auto md:mx-0 md:mr-auto"
           >
             <template #books>
-              <ReadingResources :resources="resources" />
+              <ReadingResources
+                ref="books"
+                @refresh="fetchRecommendation"
+              />
             </template>
             <template #journal-paper>
               <ReadingResources
+                ref="journals"
                 journal
-                :resources="resources"
+                @refresh="fetchRecommendation"
               />
             </template>
           </UTabs>
@@ -58,93 +164,26 @@
          </div>
         </div>
 
-        <ReadingRecomendationList />
-        <ReadingReportList />
+        <ReadingRecomendationList
+          ref="recommendation"
+          @refresh="fetchReadingResources"
+        />
+
+        <div
+          v-if="reportPending"
+          class="flex items-center justify-center py-12"
+        >
+          <UIcon
+            name="i-heroicons-arrow-path"
+            class="animate-spin text-4xl"
+          />
+        </div>
+
+        <ReadingReportList
+          v-else
+          :reports="readingReports"
+        />
       </div>
     </UContainer>
   </div>
 </template>
-
-<script setup lang="ts">
-import ReadingRecomendationList from '~/components/home/Recomendation/ReadingRecomendationList.vue'
-import ReadingReportList from '~/components/reading-passport/ReadingReportList.vue'
-import ReadingResources from '~/components/reading-passport/ReadingResources.vue'
-import Streak from '~/components/reading-passport/Streak.vue'
-
-// definePageMeta({
-//   middleware: 'auth'
-// })
-
-const getCurrentWeekDates = () => {
-  const week = []
-  const today = new Date()
-  const currentDay = today.getDay()
-  const startOfWeek = new Date(today)
-  startOfWeek.setDate(today.getDate() - currentDay)
-
-  for (let i = 0; i < 7; i++) {
-    const date = new Date(startOfWeek)
-    date.setDate(startOfWeek.getDate() + i)
-    week.push({
-      date: date,
-      day: date.toLocaleDateString('en-US', { weekday: 'long' }),
-      isStreak: Math.random() > 0.5 // Replace with actual streak logic
-    })
-  }
-  return week
-}
-
-const weekDates = ref<
-  {
-    date: Date
-    day: string
-    isStreak: boolean
-  }[]
->([])
-
-onMounted(() => {
-  weekDates.value = getCurrentWeekDates()
-})
-
-async function fetch() {
-
-}
-
-const resources = ref([
-  {
-    title: 'Domain Driven Design',
-    imageUrl:
-      'https://miro.medium.com/v2/resize:fit:1200/1*90o12yshV8kprH8mbXdnKQ.png',
-    totalPages: 180,
-    totalReadPages: 125,
-    type: 'book' as const
-  },
-  {
-    title: 'Machine Learning Fundamentals',
-    imageUrl: 'https://picsum.photos/seed/journal1/400/300',
-    totalPages: 45,
-    totalReadPages: 32,
-    type: 'journal' as const
-  },
-  {
-    title: '1984',
-    imageUrl: 'https://picsum.photos/seed/book2/400/300',
-    totalPages: 328,
-    totalReadPages: 89,
-    type: 'book' as const
-  }
-])
-
-const tabs = [
-  {
-    label: 'Books',
-    icon: 'i-lucide-book',
-    slot: 'books'
-  },
-  {
-    label: 'Research Article',
-    icon: 'i-lucide-form',
-    slot: 'journal-paper'
-  }
-]
-</script>

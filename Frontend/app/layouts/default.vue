@@ -19,6 +19,7 @@ const route = useRoute()
         class="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 rounded-[20px]"
       >
         <UButton
+          to="/dashboard"
           class="h-[64px] w-[64px] rounded-2xl flex flex-row items-center justify-center p-0"
           :variant="route.name === 'dashboard' ? 'solid' : 'soft'"
         >
@@ -48,6 +49,7 @@ const route = useRoute()
         <UButton
           class="h-[64px] w-[64px] rounded-2xl flex flex-row items-center justify-center p-0"
           :variant="route.name === 'profile' ? 'solid' : 'soft'"
+          to="/profile"
         >
           <nuxt-icon
             name="users"

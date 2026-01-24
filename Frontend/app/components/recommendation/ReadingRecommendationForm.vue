@@ -2,6 +2,8 @@
 import { z } from 'zod'
 import type { FormSubmitEvent } from '#ui/types'
 import { $authedFetch, handleResponseError } from '~/apis/api'
+import GoogleBooksSearchModal from './GoogleBooksSearchModal.vue'
+import type { GoogleBookVolume } from './GoogleBooksSearchModal.vue'
 
 defineProps<{
   loading?: boolean
@@ -33,6 +35,7 @@ const state = reactive({
 
 const uploading = ref(false)
 const toast = useToast()
+const googleBooksModal = useTemplateRef<typeof GoogleBooksSearchModal>('googleBooksModal')
 
 const id = ref<number | null>(null)
 
@@ -121,6 +124,30 @@ async function handleFileUpload(files: File[]) {
 async function onSubmit(event: FormSubmitEvent<ReadingRecommendationSchema>) {
   emit('submit', { action: action.value, data: event.data, id: id.value })
 }
+
+function openGoogleBooksSearch() {
+  googleBooksModal.value?.open()
+}
+
+function handleBookSelection(book: GoogleBookVolume) {
+  const isbn = book.volumeInfo.industryIdentifiers?.find(
+    id => id.type === 'ISBN_13' || id.type === 'ISBN_10'
+  )?.identifier || ''
+
+  state.title = book.volumeInfo.title || ''
+  state.isbn = isbn
+  state.readingCategory = book.volumeInfo.categories?.[0] || ''
+  state.authors = book.volumeInfo.authors?.join(', ') || ''
+  state.publishYear = book.volumeInfo.publishedDate?.substring(0, 4) || ''
+  state.page = book.volumeInfo.pageCount || 0
+  state.resourceLink = book.volumeInfo.previewLink || book.volumeInfo.infoLink || ''
+  state.coverImageUri = book.volumeInfo.imageLinks?.thumbnail || book.volumeInfo.imageLinks?.smallThumbnail || ''
+
+  toast.add({
+    title: 'Book details imported from Google Books',
+    color: 'success'
+  })
+}
 </script>
 
 <template>
@@ -133,6 +160,25 @@ async function onSubmit(event: FormSubmitEvent<ReadingRecommendationSchema>) {
     }"
   >
     <template #body>
+      <div class="mb-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="font-medium text-sm text-gray-900 dark:text-gray-100">
+              Import from Google Books
+            </p>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              Search and autofill book details from Google Books API
+            </p>
+          </div>
+          <UButton
+            icon="i-heroicons-magnifying-glass"
+            @click="openGoogleBooksSearch"
+          >
+            Search
+          </UButton>
+        </div>
+      </div>
+
       <UForm
         :schema="schema"
         :state="state"
@@ -304,4 +350,9 @@ async function onSubmit(event: FormSubmitEvent<ReadingRecommendationSchema>) {
       </UForm>
     </template>
   </UModal>
+
+  <GoogleBooksSearchModal
+    ref="googleBooksModal"
+    @select="handleBookSelection"
+  />
 </template>

@@ -75,6 +75,13 @@ const items: DropdownMenuItem[][] = [
     }
   ]
 ]
+
+function goToReportPage() {
+  useRouter().push({
+    name: 'ReadingReport',
+    params: { slug: props.resource.id }
+  })
+}
 </script>
 
 <template>
@@ -100,33 +107,38 @@ const items: DropdownMenuItem[][] = [
           <h1>{{ resource.title }}</h1>
         </div>
 
-       <div class="flex-1">
-        <UDropdownMenu :items>
-          <UButton
-            class="dark"
-            variant="ghost"
-            :ui="{
-              base: 'hover:bg-white/10'
-            }"
-            color="neutral"
-            size="xl"
-            icon="i-heroicons-ellipsis-vertical"
-          />
-        </UDropdownMenu>
-       </div>
+        <div class="flex-1">
+          <UDropdownMenu :items>
+            <UButton
+              class="dark"
+              variant="ghost"
+              :ui="{
+                base: 'hover:bg-white/10'
+              }"
+              color="neutral"
+              size="xl"
+              icon="i-heroicons-ellipsis-vertical"
+            />
+          </UDropdownMenu>
+        </div>
       </div>
     </template>
 
     <div
-      v-if="resource.coverImageUri"
-      class="w-full max-w-[150px] aspect-[3/4] overflow-hidden rounded-[12px]"
+      class="w-full"
+      @click="goToReportPage()"
     >
-      <img
-        :src="resource.coverImageUri"
-        alt="Resource Image"
-        class="w-full h-full object-cover"
-        @error="handleImageError"
+      <div
+        v-if="resource.coverImageUri"
+        class="w-full max-w-[150px] aspect-[3/4] overflow-hidden rounded-[12px]"
       >
+        <img
+          :src="resource.coverImageUri"
+          alt="Resource Image"
+          class="w-full h-full object-cover"
+          @error="handleImageError"
+        >
+      </div>
     </div>
 
     <template #footer>

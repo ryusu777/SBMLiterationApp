@@ -29,6 +29,7 @@ public class UpdateReadingCategoryEndpoint(
     {
         Put("{id}");
         Group<ReadingCategoryEndpointGroup>();
+        Roles("admin");
     }
 
     public override async Task HandleAsync(UpdateReadingCategoryRequest req, CancellationToken ct)

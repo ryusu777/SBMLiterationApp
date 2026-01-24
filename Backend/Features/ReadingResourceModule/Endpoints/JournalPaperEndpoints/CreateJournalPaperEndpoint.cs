@@ -90,7 +90,7 @@ public class CreateJournalPaperEndpoint(
     {
         var userId = int.Parse(User.FindFirst("sub")!.Value);
         
-        if (await _dbContext.JournalPapers.AnyAsync(x => x.ISBN == req.ISBN, ct))
+        if (await _dbContext.JournalPapers.AnyAsync(x => x.UserId == userId && x.ResourceLink == req.ResourceLink, ct))
         {
             await Send.ResultAsync(TypedResults.Conflict<ApiResponse>((Result)CrudDomainError.Duplicate("JournalPaper", "ISBN")));
             return;

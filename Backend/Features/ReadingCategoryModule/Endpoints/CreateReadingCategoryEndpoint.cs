@@ -31,6 +31,7 @@ public class CreateReadingCategoryEndpoint(
     {
         Post("");
         Group<ReadingCategoryEndpointGroup>();
+        Roles("admin");
     }
 
     public override async Task HandleAsync(CreateReadingCategoryRequest req, CancellationToken ct)

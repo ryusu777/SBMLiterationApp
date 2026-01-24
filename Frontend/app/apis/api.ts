@@ -32,7 +32,6 @@ export function $authedFetch<T>(
 
         triedRefresh = true
         const refreshed = await authStore.requestRefreshToken()
-        console.log(refreshed)
         if (refreshed) {
           await api<T>(request, {
             ...opts,
@@ -93,16 +92,20 @@ export const useAuth = defineStore('auth', () => {
     }
   }
 
+  let currentRefreshPromise: Promise<{ accessToken: string, refreshToken: string }> | null = null
   async function requestRefreshToken() {
     const $api = useNuxtApp().$backendApi as typeof $fetch
     try {
-      const result = await $api<{ accessToken: string, refreshToken: string }>('/auth/refresh', {
-        method: 'POST',
-        body: {
-          accessToken: getToken(),
-          refreshToken: getRefreshToken()
-        }
-      })
+      if (!currentRefreshPromise)
+        currentRefreshPromise = $api<{ accessToken: string, refreshToken: string }>('/auth/refresh', {
+          method: 'POST',
+          body: {
+            accessToken: getToken(),
+            refreshToken: getRefreshToken()
+          }
+        })
+
+      const result = await currentRefreshPromise
 
       if (result.accessToken && result.refreshToken) {
         setToken(result.accessToken)
@@ -112,6 +115,8 @@ export const useAuth = defineStore('auth', () => {
       return false
     } catch {
       return false
+    } finally {
+      currentRefreshPromise = null
     }
   }
 

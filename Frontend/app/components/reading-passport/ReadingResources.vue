@@ -51,19 +51,29 @@ async function fetch() {
   }
 }
 
+defineExpose({
+  fetch
+})
+
 onMounted(async () => {
   await fetch()
 
   if (rows.value.length > 0)
-    swiperInstance.value?.slideNext()
+    setTimeout(() => swiperInstance.value?.slideNext(), 10)
 })
 
+const emit = defineEmits<{
+  (e: 'refresh'): void
+}>()
 function onRefresh() {
   fetch()
+  emit('refresh')
 }
 
 function onCreate() {
-  useRouter().push(props.journal ? { name: 'CreateReadingBook' } : { name: 'CreateReadingJournal' })
+  useRouter().push(props.journal
+    ? { name: 'CreateReadingJournal' }
+    : { name: 'CreateReadingBook' })
 }
 </script>
 

@@ -1,7 +1,6 @@
 using PureTCOWebApp.Core.Models;
-using System.Text.Json.Serialization;
 
-namespace PureTCOWebApp.Features.ReadingResourceModule.Domain.Entities;
+namespace PureTCOWebApp.Features.StreakModule.Domain;
 
 public class StreakExp : AuditableEntity
 {

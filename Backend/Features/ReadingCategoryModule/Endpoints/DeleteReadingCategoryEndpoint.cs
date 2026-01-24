@@ -16,6 +16,7 @@ public class DeleteReadingCategoryEndpoint(
     {
         Delete("{id}");
         Group<ReadingCategoryEndpointGroup>();
+        Roles("admin");
     }
 
     public override async Task HandleAsync(DeleteReadingCategoryRequest req, CancellationToken ct)

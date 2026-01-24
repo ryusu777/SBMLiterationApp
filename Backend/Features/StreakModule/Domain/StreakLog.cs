@@ -1,4 +1,4 @@
-namespace PureTCOWebApp.Features.ReadingResourceModule.Domain.Entities;
+namespace PureTCOWebApp.Features.StreakModule.Domain;
 
 public class StreakLog
 {
