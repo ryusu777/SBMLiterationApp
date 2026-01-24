@@ -13,4 +13,12 @@ public class User : IdentityUser<int>
     public string ProgramStudy { get; set; }
     public string Faculty { get; set; }
     public int? GenerationYear { get; set; }
+
+    public void UpdateOnboardingInfo(string nim, string programStudy, string faculty, int? generationYear)
+    {
+        Nim = nim;
+        ProgramStudy = programStudy;
+        Faculty = faculty;
+        GenerationYear = generationYear;
+    }
 }
