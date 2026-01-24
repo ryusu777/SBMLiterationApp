@@ -1,4 +1,5 @@
 using PureTCOWebApp.Core.Models;
+using PureTCOWebApp.Features.ReadingResourceModule.Domain.Events;
 using System.Text.Json.Serialization;
 
 namespace PureTCOWebApp.Features.ReadingResourceModule.Domain.Entities;
@@ -26,7 +27,7 @@ public class ReadingReport : AuditableEntity
         string insight
     )
     {
-        return new ReadingReport
+        var entity = new ReadingReport
         {
             UserId = userId,
             ReadingResourceId = readingResourceId,
@@ -34,11 +35,14 @@ public class ReadingReport : AuditableEntity
             Insight = insight,
             ReportDate = DateTime.UtcNow
         };
+
+        entity.Raise(new ReadingReportCreatedEvent(entity));
+
+        return entity;
     }
 
-    public void Update(int currentPage, string insight)
+    public void Update(string insight)
     {
-        CurrentPage = currentPage;
         Insight = insight;
     }
 }

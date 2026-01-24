@@ -18,7 +18,6 @@ public class QueryReadingRecommendationEndpoint(ApplicationDbContext dbContext)
     {
         Get("");
         Group<ReadingRecommendationEndpointGroup>();
-        AllowAnonymous();
     }
 
     public override async Task HandleAsync(QueryReadingRecommendationRequest req, CancellationToken ct)

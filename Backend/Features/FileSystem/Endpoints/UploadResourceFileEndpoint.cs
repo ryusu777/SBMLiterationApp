@@ -46,7 +46,6 @@ public class UploadResourceFileEndpoint : Endpoint<UploadResourceFileRequest, Ap
         Post("/upload");
         Group<FileSystemEndpointGroup>();
         AllowFileUploads();
-        AllowAnonymous();
     }
 
     public override async Task HandleAsync(UploadResourceFileRequest req, CancellationToken ct)

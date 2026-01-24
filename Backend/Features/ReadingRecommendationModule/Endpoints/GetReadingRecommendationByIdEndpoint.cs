@@ -26,7 +26,6 @@ public class GetReadingRecommendationByIdEndpoint(ApplicationDbContext dbContext
     {
         Get("{id}");
         Group<ReadingRecommendationEndpointGroup>();
-        AllowAnonymous();
     }
 
     public override async Task HandleAsync(GetReadingRecommendationByIdRequest req, CancellationToken ct)

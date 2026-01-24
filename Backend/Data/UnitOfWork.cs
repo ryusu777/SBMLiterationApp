@@ -60,6 +60,13 @@ public class UnitOfWork
             await BeginTransactionAsync(cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
             await PublishDomainEventsAsync();
+            
+            // Save changes made by event handlers
+            if (_dbContext.ChangeTracker.HasChanges())
+            {
+                await _dbContext.SaveChangesAsync(cancellationToken);
+            }
+            
             await CommitTransactionAsync(cancellationToken);
             return Result.Success();
         }

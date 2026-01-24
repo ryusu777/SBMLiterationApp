@@ -8,17 +8,12 @@ using PureTCOWebApp.Data;
 namespace PureTCOWebApp.Features.ReadingResourceModule.Endpoints.ReadingReportEndpoint;
 
 public record UpdateReadingReportRequest(
-    int CurrentPage,
     string Insight);
 
 public class UpdateReadingReportValidator : AbstractValidator<UpdateReadingReportRequest>
 {
     public UpdateReadingReportValidator()
     {
-        RuleFor(x => x.CurrentPage)
-            .GreaterThanOrEqualTo(0)
-            .WithMessage("Current page must be 0 or greater.");
-
         RuleFor(x => x.Insight)
             .NotEmpty()
             .WithMessage("Insight is required.")
@@ -58,7 +53,7 @@ public class UpdateReadingReportEndpoint(ApplicationDbContext context, UnitOfWor
             return;
         }
 
-        report.Update(req.CurrentPage, req.Insight);
+        report.Update(req.Insight);
         var result = await unitOfWork.SaveChangesAsync(ct);
 
         if (result.IsFailure)
