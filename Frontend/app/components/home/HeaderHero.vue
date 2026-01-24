@@ -1,5 +1,6 @@
 <template>
-  <UContainer class="bg-base">
+  <section class="bg-base">
+    <UContainer >
     <div class="grid grid-cols-12 gap-8">
       <!-- LEFT CONTENT -->
       <div class="col-span-12 lg:col-span-7 py-[40px] md:py-[80px]">
@@ -37,4 +38,5 @@
       </div>
     </div>
   </UContainer>
+  </section>
 </template>

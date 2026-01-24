@@ -136,9 +136,12 @@ const tabs = [
           <Streak :week-dates="weekDates" />
         </div>
 
-        <div class=" ">
-          <UTabs
+        <div class="grid grid-cols-12">
+         <div class="col-span-12 sm:col-span-6"> <UTabs
             :items="tabs"
+            :ui="{
+              root: 'mb-[30px]'
+            }"
             class="max-w-[300px] mt-[20px] mb-[30px] mx-auto md:mx-0 md:mr-auto"
           >
             <template #books>
@@ -155,6 +158,10 @@ const tabs = [
               />
             </template>
           </UTabs>
+        </div>
+         <div class="hidden md:block sm:col-span-6 flex justify-center items-center">
+          <img src="/home/Dashboard-GIrl.svg" class="w-full h-full" alt=""/>
+         </div>
         </div>
 
         <ReadingRecomendationList

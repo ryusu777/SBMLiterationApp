@@ -16,7 +16,7 @@ defineProps<{
   >
     <div class="fire-wrapper">
       <svg
-        class="fire"
+        class="fire overflow-visible" 
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 121.93 156.5"
       >
@@ -36,7 +36,7 @@ defineProps<{
     </div>
 
     <div>
-      <p class="text-fire font-semibold tracking-tight mb-[10px]">
+      <p class="text-primary font-semibold tracking-tight mb-[10px]">
         7 Days Streak. Keep it up!
       </p>
       <div class="flex flex-row gap-x-2 bg-[#F1F1F1] px-4 py-2 rounded-2xl">
@@ -46,7 +46,7 @@ defineProps<{
             :name="dateItem.isStreak ? 'check' : 'no-streak'"
             :filled="false"
             class="text-[20px]"
-            :class="dateItem.isStreak ? 'text-fire' : 'text-[#CCCCCC]'"
+            :class="dateItem.isStreak ? 'text-primary' : 'text-[#CCCCCC]'"
           />
         </div>
       </div>
@@ -55,77 +55,52 @@ defineProps<{
 </template>
 
 <style scoped>
-.fire-box {
-  height: 94px;
-  overflow: hidden;
+.fire-wrapper {
   display: flex;
   align-items: flex-end;
+  height: 100px;
 }
 
-/* 🔥 SATU BADAN */
 .fire {
-  height: 110px;
+  height: 80px;
   transform-origin: center bottom;
-  animation: fireBody 1.4s ease-in-out infinite;
+  filter: drop-shadow(0 0 5px rgba(241, 91, 36, 0.2));
 }
 
-/* DETAIL SAJA */
+.fire-back, .fire-mid, .fire-front {
+  transform-origin: center bottom;
+  animation: fireFlicker 1.2s ease-in-out infinite;
+}
+
 .fire-back {
   fill: #f15b24;
-  animation: fireScaleBack 1.8s ease-in-out infinite;
+  animation-duration: 1.5s;
 }
 
 .fire-mid {
   fill: #f78d29;
-  animation: fireScaleMid 1.5s ease-in-out infinite;
+  animation-delay: 0.1s;
+  animation-duration: 1.2s;
 }
 
 .fire-front {
   fill: #fcee23;
-  animation: fireScaleFront 1.2s ease-in-out infinite;
+  animation-delay: 0.2s;
+  animation-duration: 0.9s;
 }
 
-/* BODY BOUNCE */
-@keyframes fireBody {
-  0% {
-    transform: translateY(0);
+@keyframes fireFlicker {
+  0%, 100% {
+    transform: scale(1) skewX(0deg);
+  }
+  25% {
+    transform: scale(0.95, 1.05) skewX(-2deg);
   }
   50% {
-    transform: translateY(-4px);
+    transform: scale(1.05, 0.95) skewX(2deg);
   }
-  100% {
-    transform: translateY(0);
-  }
-}
-
-/* MICRO FLICKER */
-@keyframes fireScaleBack {
-  0%,
-  100% {
-    transform: scaleY(1);
-  }
-  50% {
-    transform: scaleY(1.04);
-  }
-}
-
-@keyframes fireScaleMid {
-  0%,
-  100% {
-    transform: scaleY(1);
-  }
-  50% {
-    transform: scaleY(1.07);
-  }
-}
-
-@keyframes fireScaleFront {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.1, 0.95);
+  75% {
+    transform: scale(0.98, 1.02) skewX(-1deg);
   }
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <UContainer class="bg-white py-[40px] md:py-[80px]">
+  <section class="bg-white py-[40px] md:py-[80px]"> <UContainer >
     <div class="grid grid-cols-12 bg-amber-50 p-8 rounded-2xl gap-8">
       <!-- FAQ SECTION -->
       <div class="col-span-12 lg:col-span-6">
@@ -68,7 +68,8 @@
         </div>
       </div>
     </div>
-  </UContainer>
+  </UContainer></section>
+ 
 </template>
 
 <script setup>

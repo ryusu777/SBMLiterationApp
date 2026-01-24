@@ -1,5 +1,5 @@
 <template>
-  <UContainer class="bg-base py-[40px] md:py-[120px]">
+  <section class="bg-base py-[40px] md:py-[120px]"><UContainer >
     <div class="grid grid-cols-12 gap-8">
       <!-- LEFT CONTENT -->
       <div class="col-span-12 lg:col-span-7">
@@ -34,5 +34,6 @@
         </div>
       </div>
     </div>
-  </UContainer>
+  </UContainer></section>
+  
 </template>
