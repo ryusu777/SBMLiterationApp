@@ -1,5 +1,5 @@
 <template>
-  <section class="bg-white p-4"> <UContainer>
+  <section class="bg-white px-4 py-16"> <UContainer>
     <div class="grid grid-cols-12">
 
       <!-- LEFT -->
