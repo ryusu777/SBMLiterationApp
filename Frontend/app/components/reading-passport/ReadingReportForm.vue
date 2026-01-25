@@ -11,7 +11,8 @@ const props = defineProps<{
 
 const schema = z.object({
   currentPage: z.coerce.number().min(props.latestPageProgress, `Current page must be at least ${props.latestPageProgress}`).max(props.maxPage, `Current page cannot exceed ${props.maxPage}`),
-  insight: z.string().min(1, 'Insight is required')
+  insight: z.string().min(1, 'Insight is required'),
+  timeSpent: z.coerce.number().min(1, 'Time spent must be at least 1 minute')
 })
 
 export type ReadingReportSchema = z.output<typeof schema>
@@ -20,7 +21,8 @@ const isOpen = ref(false)
 
 const state = reactive({
   currentPage: props.latestPageProgress,
-  insight: ''
+  insight: '',
+  timeSpent: 0
 })
 
 const emit = defineEmits<{
@@ -47,11 +49,13 @@ const pageOptions = computed(() => {
 function setState(data: Partial<ReadingReportSchema>) {
   if (data.currentPage !== undefined) state.currentPage = data.currentPage
   if (data.insight !== undefined) state.insight = data.insight
+  if (data.timeSpent !== undefined) state.timeSpent = data.timeSpent
 }
 
 function resetState() {
   state.currentPage = props.latestPageProgress
   state.insight = ''
+  state.timeSpent = 0
 }
 
 function open() {
@@ -108,6 +112,22 @@ async function onSubmit(event: FormSubmitEvent<ReadingReportSchema>) {
             class="w-full"
             placeholder="Select current page"
             @update:model-value="(selected) => state.currentPage = selected.value"
+          />
+        </UFormField>
+
+        <!-- Time Spent field -->
+        <UFormField
+          label="Time Spent (minutes)"
+          name="timeSpentInMinutes"
+          required
+        >
+          <UInput
+            v-model="state.timeSpent"
+            type="number"
+            placeholder="Enter time spent reading"
+            size="lg"
+            class="w-full"
+            min="1"
           />
         </UFormField>
 

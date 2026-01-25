@@ -11,6 +11,37 @@ interface ReadingCategory {
   categoryName: string
 }
 
+interface JournalDoiResponse {
+  message: string
+  data: {
+    title?: string[]
+    author?: Array<{
+      given?: string
+      family?: string
+      sequence?: string
+      affiliation?: string[]
+    }>
+    issued?: {
+      dateParts?: number[][]
+    }
+    published?: {
+      dateParts?: number[][]
+    }
+    page?: string
+    issn?: string[]
+    issnType?: Array<{
+      value: string
+      type: string
+    }>
+    subject?: string[]
+    doi?: string
+    containerTitle?: string[]
+  }
+  errorCode?: string
+  errorDescription?: string
+  errors?: string[]
+}
+
 const props = defineProps<{
   loading?: boolean
   journal?: boolean
@@ -50,6 +81,7 @@ const state = reactive({
 const categories = ref<ReadingCategory[]>([])
 const categoriesLoading = ref(false)
 const uploading = ref(false)
+const doiFetching = ref(false)
 const toast = useToast()
 const googleBooksModal = useTemplateRef<typeof GoogleBooksSearchModal>('googleBooksModal')
 
@@ -218,6 +250,102 @@ function handleBookSelection(book: GoogleBookVolume) {
   })
 }
 
+async function handleDoiPaste(event: ClipboardEvent) {
+  if (!props.journal) return
+
+  let pastedText = event.clipboardData?.getData('text')
+  if (!pastedText) return
+
+  // Convert DOI identifier to full URL if needed
+  pastedText = pastedText.trim()
+  if (pastedText.match(/^10\.\d{4,}/)) {
+    // It's a DOI identifier without URL, prepend the DOI resolver
+    pastedText = `https://doi.org/${pastedText}`
+  }
+
+  try {
+    doiFetching.value = true
+    const response = await $authedFetch<JournalDoiResponse>('/journal-doi', {
+      query: {
+        doi: pastedText
+      }
+    })
+
+    if (response.errorCode || response.errorDescription) {
+      handleResponseError(response)
+      return
+    }
+
+    if (response.data) {
+      const data = response.data
+
+      // Fill title
+      if (data.title?.[0]) {
+        state.title = data.title[0]
+      }
+
+      // Fill ISBN/ISSN
+      if (data.issn?.[0]) {
+        state.isbn = data.issn[0]
+      } else if (data.issnType?.[0]?.value) {
+        state.isbn = data.issnType[0].value
+      }
+
+      // Fill authors
+      if (data.author && data.author.length > 0) {
+        state.authors = data.author.map((author) => {
+          const given = author.given || ''
+          const family = author.family || ''
+          return `${given} ${family}`.trim()
+        }).filter(name => name.length > 0)
+        if (state.authors.length === 0) state.authors = ['']
+      }
+
+      // Fill publish year
+      const year = data.issued?.dateParts?.[0]?.[0] || data.published?.dateParts?.[0]?.[0]
+      if (year) {
+        state.publishYear = year.toString()
+      }
+
+      // Fill category from subject
+      if (data.subject?.[0]) {
+        const journalCategory = data.subject[0]
+        const categoryExists = categories.value.some(cat => cat.categoryName === journalCategory)
+        if (categoryExists) {
+          state.readingCategory = journalCategory
+          state.customCategory = ''
+        } else {
+          state.readingCategory = 'Other'
+          state.customCategory = journalCategory
+        }
+      }
+
+      // Fill page count - extract from page range if available
+      if (data.page) {
+        // Handle page ranges like "123-145" or just "123"
+        const pageMatch = data.page.match(/(\d+)(?:-(\d+))?/)
+        if (pageMatch) {
+          const startPage = parseInt(pageMatch[1] || '0')
+          const endPage = pageMatch[2] ? parseInt(pageMatch[2]) : startPage
+          state.page = endPage - startPage + 1
+        }
+      }
+
+      // resourceLink is already set by the paste event
+      state.resourceLink = pastedText
+
+      toast.add({
+        title: 'Journal details imported from DOI',
+        color: 'success'
+      })
+    }
+  } catch (error) {
+    handleResponseError(error)
+  } finally {
+    doiFetching.value = false
+  }
+}
+
 async function onSubmit(event: FormSubmitEvent<ReadingResourceSchema>) {
   emit('submit', {
     ...event.data,
@@ -370,7 +498,7 @@ async function onSubmit(event: FormSubmitEvent<ReadingResourceSchema>) {
       <!-- Book Category and Page Count - responsive grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
         <UFormField
-          label="Book Category"
+          label="Category"
           name="readingCategory"
           required
         >
@@ -420,13 +548,34 @@ async function onSubmit(event: FormSubmitEvent<ReadingResourceSchema>) {
         :label="journal ? 'DOI Link' : 'Google Books Link'"
         name="resourceLink"
       >
-        <UInput
-          v-model="state.resourceLink"
-          type="url"
-          placeholder="https://example.com/resource"
-          size="lg"
-          class="w-full"
-        />
+        <div class="relative">
+          <UInput
+            v-model="state.resourceLink"
+            type="url"
+            :placeholder="journal ? 'Paste DOI link to auto-fill form' : 'https://example.com/resource'"
+            size="lg"
+            class="w-full"
+            :disabled="doiFetching"
+            @paste="journal ? handleDoiPaste($event) : undefined"
+          />
+          <div
+            v-if="doiFetching"
+            class="absolute right-3 top-1/2 -translate-y-1/2"
+          >
+            <UIcon
+              name="i-heroicons-arrow-path"
+              class="animate-spin text-primary"
+            />
+          </div>
+        </div>
+        <template
+          v-if="journal"
+          #help
+        >
+          <p class="text-xs text-gray-500">
+            Paste a DOI link to automatically fetch and fill journal details
+          </p>
+        </template>
       </UFormField>
 
       <!-- Cover Image - full width -->

@@ -1,5 +1,6 @@
 using FastEndpoints;
 using PureTCOWebApp.Core;
+using PureTCOWebApp.Core.Models;
 
 namespace PureTCOWebApp.Features.TestModule.JournalDoi;
 
@@ -20,8 +21,7 @@ public class GetJournalByDoiEndpoint : Endpoint<GetJournalByDoiRequest, ApiRespo
     public override void Configure()
     {
         Get("/journal-doi");
-        Group<TestModuleEndpointGroup>();
-        AllowAnonymous();
+        Group<GlobalApiEndpointGroup>();
         Summary(s => s.Summary = "Get journal information by DOI from CrossRef API");
     }
 
@@ -33,15 +33,20 @@ public class GetJournalByDoiEndpoint : Endpoint<GetJournalByDoiRequest, ApiRespo
             return;
         }
 
-        var result = await _crossRefService.GetWorkByDoiAsync(req.Doi);
-        
-        if (result == null)
+        try
         {
-            await Send.NotFoundAsync(ct);
-            return;
+            var result = await _crossRefService.GetWorkByDoiAsync(req.Doi);
+            if (result == null)
+            {
+                await Send.NotFoundAsync(ct);
+                return;
+            }
+            var response = new ApiResponse<WorkMessage>("Success", result, null, null);
+            await Send.OkAsync(response, ct);
         }
-
-        var response = new ApiResponse<WorkMessage>("Success", result, null, null);
-        await Send.OkAsync(response, ct);
+        catch
+        {
+            await Send.ResultAsync(TypedResults.NotFound<ApiResponse>((Result)new Error("DoiNotFound", "DOI not found")));
+        }
     }
 }

@@ -30,6 +30,11 @@ export function $authedFetch<T>(
         if (triedRefresh && response.status === 401)
           reject(response)
 
+        if (response.status !== 401) {
+          reject(response)
+          return
+        }
+
         triedRefresh = true
         const refreshed = await authStore.requestRefreshToken()
         if (refreshed) {
@@ -51,6 +56,16 @@ export function $authedFetch<T>(
         }
       }
     })
+  })
+}
+
+export function useBackendFetch<T>(
+  request: Parameters<typeof $fetch<T>>[0],
+  opts?: Parameters<typeof $fetch<T>>[1]
+) {
+  return useFetch(request, {
+    ...opts,
+    $fetch: useNuxtApp().$backendApi as typeof $fetch
   })
 }
 
@@ -136,6 +151,17 @@ export const useAuth = defineStore('auth', () => {
     return JSON.parse(decodedPayload)
   }
 
+  function getFullname() {
+    const jwtClaims = token.value ? parseJwt(token.value) : null
+
+    if (jwtClaims === null) return null
+
+    if ('given_name' in jwtClaims) {
+      return jwtClaims['given_name'] as string
+    }
+    return null
+  }
+
   function getRoles() {
     const jwtClaims = token.value ? parseJwt(token.value) : null
 
@@ -154,22 +180,23 @@ export const useAuth = defineStore('auth', () => {
     setRefreshToken,
     refreshToken,
     token,
-    getRoles
+    getRoles,
+    getFullname
   }
 })
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function handleResponseError(error: any) {
+  console.log(error._data.errorDescription)
   const toast = useToast()
-  const statusCode = error?.response?.status || error?.statusCode
   const description
-    = error?.response?._data?.message
-      || error?.response?._data?.error
+    = error?._data?.errorDescription
+      || error?.response?._data?.errorDescription
       || error?.message
       || 'An unknown error occurred'
 
   toast.add({
-    title: statusCode ? `Error ${statusCode}` : 'Error',
+    title: 'Error',
     description,
     color: 'error',
     icon: 'i-lucide-triangle-alert'

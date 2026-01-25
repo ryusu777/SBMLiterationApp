@@ -31,6 +31,14 @@ onMounted(() => {
   auth.getRefreshToken()
   isAuthLoading.value = false
 })
+
+function goToDashboard() {
+  if (auth.getRoles()?.includes('admin')) {
+    navigateTo('/admin')
+  } else {
+    navigateTo('/dashboard')
+  }
+}
 </script>
 
 <template>
@@ -65,10 +73,10 @@ onMounted(() => {
         />
         <UButton
           v-else
-          to="/dashboard"
           color="neutral"
           variant="ghost"
           label="Dashboard"
+          @click="goToDashboard"
         />
       </template>
     </UHeader>

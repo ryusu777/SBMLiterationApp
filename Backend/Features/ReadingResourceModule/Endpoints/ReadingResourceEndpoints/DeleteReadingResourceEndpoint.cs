@@ -31,6 +31,12 @@ public class DeleteReadingResourceEndpoint(
                 await Send.ForbiddenAsync(ct);
                 return;
             }
+
+            if (book.ReadingReports.Any())
+            {
+                await Send.ResultAsync(TypedResults.BadRequest<ApiResponse>((Result)new Error("DeleteFailed", "Cannot delete Book that you have read")));
+                return;
+            }
             
             _dbContext.Remove(book);
             var result = await _unitOfWork.SaveChangesAsync(ct);
