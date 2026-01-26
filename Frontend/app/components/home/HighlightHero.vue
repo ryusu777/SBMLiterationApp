@@ -1,9 +1,9 @@
 <template>
   <section class="bg-white dark:bg-transparent px-4 py-16">
     <UContainer>
-      <div class="grid grid-cols-12">
+      <div class="grid grid-cols-12 gap-y-8 lg:gap-y-0">
         <!-- LEFT -->
-        <div class="col-span-12 lg:col-span-4 p-4 flex flex-col justify-between">
+        <div class="col-span-12 lg:col-span-4 pt-8 border-transparent lg:pt-0 border-t lg:border-t-0 dark:border-gray-500  p-4 flex flex-col justify-between">
           <div class="font-poppins tracking-tight text-[37px] font-[400] mb-5 text-dark dark:text-white">
             <h1 class="leading-tight">
               Join Our Community
@@ -22,7 +22,7 @@
         </div>
 
         <!-- MIDDLE -->
-        <div class="col-span-12 lg:col-span-4 p-4 flex flex-col justify-between text-dark dark:text-white">
+        <div class="col-span-12 lg:col-span-4 pt-8 lg:pt-0  border-t lg:border-l lg:border-t-0 border-gray-500 p-4 flex flex-col justify-between text-dark dark:text-white">
           <h1 class="text-[40px]">
             900+
           </h1>
