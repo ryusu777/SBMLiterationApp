@@ -133,13 +133,17 @@ onMounted(async () => {
         >
           <template #header>
             <div class="flex flex-row items-start justify-between gap-4">
-              <div class="text-white pt-2">
-                <UIcon
-                  name="i-heroicons-chevron-left"
-                  class="size-6"
-                  @click="useRouter().back()"
-                />
-              </div>
+              <div class="text-white">
+  <div 
+    class="flex items-center justify-center w-10 h-10 -ml-2 rounded-full transition-all duration-200 cursor-pointer hover:bg-white/20 active:bg-white/30 active:scale-90 group"
+    @click="useRouter().back()"
+  >
+    <UIcon
+      name="i-heroicons-chevron-left"
+      class="size-7 transition-transform group-hover:-translate-x-0.5"
+    />
+  </div>
+</div>
               <UPageHeader
                 :title="readingResource?.title"
                 :ui="{
@@ -243,7 +247,7 @@ onMounted(async () => {
 
         <!-- TODO: Style the report reading session button -->
         <UButton
-          class="w-full flex justify-center py-4 bg-[#265FC4]"
+          class="w-full flex justify-center py-4 bg-[#265FC4]  cursor-pointer"
           @click="form?.open()"
         >
           <nuxt-icon

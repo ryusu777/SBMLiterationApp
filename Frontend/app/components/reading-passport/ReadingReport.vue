@@ -36,7 +36,7 @@ defineProps<{
         >
         <div
           v-else
-          class="w-full h-full border-2 border-primary bg-white rounded-[12px] flex items-center justify-center text-primary"
+          class="w-full h-full border-2 border-primary bg-slate-200 dark:bg-slate-700 rounded-[12px] flex items-center justify-center text-primary"
         >
           <UIcon
             name="i-heroicons-book-open"

@@ -56,34 +56,34 @@ async function handleSubmit(
           root: 'bg-[#265FC4] mx-[-16px] sm:mx-[-24px] lg:mx-[-32px] rounded-t-none rounded-b-3xl px-4 py-4'
         }"
       >
-        <template #header>
-          <div class="flex items-start justify-between gap-2">
-            <div class="text-white">
-              <UIcon
-                name="i-heroicons-chevron-left"
-                class="size-6"
-                @click="useRouter().back()"
-              />
-            </div>
-            <UPageHeader
-              title="Add Book"
-              :ui="{
-                root: 'py-0 border-0 pb-10',
-                wrapper: 'lg:justify-center',
-                title:
-                  'text-white text-center  line-clamp-1 text-[22px] lg:text-[24px] leading-tight font-medium'
-              }"
-              class="flex-1 border-0"
-            />
-            <!-- This is just to make the title center -->
-            <div class="text-transparent">
-              <UIcon
-                name="i-heroicons-chevron-left"
-                class="size-6"
-              />
-            </div>
-          </div>
-        </template>
+      <template #header>
+  <div class="flex items-start justify-between gap-2 relative"> <div class="text-white z-50 relative"> 
+      <div 
+        class="flex items-center justify-center w-10 h-10 -ml-2 rounded-full transition-all duration-200 cursor-pointer hover:bg-white/20 active:bg-white/30 active:scale-90 group"
+        @click="useRouter().back()"
+      >
+        <UIcon
+          name="i-heroicons-chevron-left"
+          class="size-7 transition-transform group-hover:-translate-x-0.5"
+        />
+      </div>
+    </div>
+
+    <UPageHeader
+      title="Add Book"
+      :ui="{
+        root: 'py-0 border-0 pb-10',
+        wrapper: 'lg:justify-center',
+        title: 'text-white text-center line-clamp-1 text-[22px] lg:text-[24px] leading-tight font-medium'
+      }"
+      class="flex-1 border-0"
+    />
+
+    <div class="text-transparent pointer-events-none">
+      <UIcon name="i-heroicons-chevron-left" class="size-6" />
+    </div>
+  </div>
+</template>
 
         <template #footer>
           <div

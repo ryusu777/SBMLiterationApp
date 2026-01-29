@@ -93,7 +93,8 @@ const tab = ref(0)
             v-model="tab"
             :items="tabs"
             :ui="{
-              list: 'mb-2'
+              list: 'mb-2',
+              trigger: 'cursor-pointer'
             }"
             class="max-w-[300px] mt-3 mb-2 mx-auto md:mx-0 md:mr-auto"
           />

@@ -377,7 +377,7 @@ async function onSubmit(event: FormSubmitEvent<ReadingResourceSchema>) {
         v-if="!journal"
         class="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700"
       >
-        <div class="flex items-center justify-between">
+        <div class="flex flex-col space-y-3 sm:space-y-0 sm:flex-row sm:items-center justify-between">
           <div>
             <p class="font-medium text-sm text-gray-900 dark:text-gray-100">
               Import from Google Books
@@ -389,6 +389,7 @@ async function onSubmit(event: FormSubmitEvent<ReadingResourceSchema>) {
           <UButton
             type="button"
             icon="i-heroicons-magnifying-glass"
+            class="cursor-pointer w-full sm:w-fit justify-center"
             @click="openGoogleBooksSearch"
           >
             Search Books
@@ -455,6 +456,7 @@ async function onSubmit(event: FormSubmitEvent<ReadingResourceSchema>) {
             color="primary"
             variant="soft"
             icon="i-heroicons-plus"
+            class="cursor-pointer"
             @click="addAuthor"
           >
             Add Author
@@ -486,6 +488,7 @@ async function onSubmit(event: FormSubmitEvent<ReadingResourceSchema>) {
             color="error"
             variant="soft"
             icon="i-heroicons-trash"
+            class="cursor-pointer"
             square
             @click="removeAuthor(index)"
           />
@@ -649,7 +652,7 @@ async function onSubmit(event: FormSubmitEvent<ReadingResourceSchema>) {
         <UButton
           type="submit"
           size="lg"
-          class="px-8 w-full text-center flex justify-center"
+          class="px-8 w-full text-center flex justify-center cursor-pointer"
           :loading
         >
           Save
