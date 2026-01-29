@@ -5,9 +5,10 @@ import type { Swiper as SwiperType } from 'swiper'
 // Swiper styles (WAJIB)
 import 'swiper/css'
 import 'swiper/css/effect-cards'
+import 'swiper/css/navigation'
 
 // Swiper module
-import { EffectCards, Mousewheel } from 'swiper/modules'
+import { EffectCards, Mousewheel, Navigation } from 'swiper/modules'
 import { handleResponseError } from '~/apis/api'
 import ReadingResourceCard from './ReadingResourceCard.vue'
 
@@ -90,12 +91,17 @@ function onCreate() {
 </script>
 
 <template>
+ <div class="relative ">
   <Swiper
-    :modules="[EffectCards, Mousewheel]"
+    :modules="[EffectCards, Mousewheel, Navigation]"
     effect="cards"
     grab-cursor
     mousewheel
     class="w-full max-w-[300px] sm:max-w-[330px]"
+    :navigation="{
+        prevEl: '.prev-btn',
+        nextEl: '.next-btn',
+      }"
     @swiper="onSwiper"
   >
     <SwiperSlide class="aspect-[2/3] rounded-[36px] overflow-hidden">
@@ -126,6 +132,22 @@ function onCreate() {
       />
     </SwiperSlide>
   </Swiper>
+  <button class="prev-btn absolute left-[-5px] sm:left-[-15px] top-1/2 -translate-y-1/2 z-30 
+               flex items-center justify-center w-12 h-12 rounded-full bg-white shadow-lg 
+               border border-gray-100 text-[#3566CD] transition-all duration-300
+               hover:bg-[#3566CD] hover:text-white active:scale-95
+               disabled:opacity-0 disabled:pointer-events-none cursor-pointer">
+  <UIcon name="i-heroicons-chevron-left" class="size-6" />
+</button>
+
+<button class="next-btn absolute right-[-5px] sm:right-[-15px] top-1/2 -translate-y-1/2 z-30 
+               flex items-center justify-center w-12 h-12 rounded-full bg-white shadow-lg 
+               border border-gray-100 text-[#3566CD] transition-all duration-300
+               hover:bg-[#3566CD] hover:text-white active:scale-95
+               disabled:opacity-0 disabled:pointer-events-none cursor-pointer">
+  <UIcon name="i-heroicons-chevron-right" class="size-6" />
+</button>
+ </div>
 </template>
 
 <style>

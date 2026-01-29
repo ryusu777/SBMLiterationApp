@@ -128,7 +128,7 @@ function goToReportPage() {
     </template>
 
     <div
-      class="w-full"
+      class="w-full flex justify-between items-center"
       @click="goToReportPage()"
     >
       <div
@@ -142,6 +142,16 @@ function goToReportPage() {
           @error="handleImageError"
         >
       </div>
+      <div class="relative flex items-center justify-center mr-2">
+    <div class="absolute inset-0 rounded-full bg-white/40 animate-ping opacity-75"></div>
+    
+    <div class="relative px-3 py-2 border-2 border-white rounded-full text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-colors cursor-pointer">
+      <UIcon 
+        name="i-heroicons-clipboard-document-check" 
+        class="size-7" 
+      />
+    </div>
+  </div>
     </div>
 
     <template #footer>
