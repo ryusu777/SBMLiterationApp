@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { $authedFetch, handleResponseError, type ApiResponse } from '~/apis/api'
+import { MarkdownParagraphExtension } from '~/extensions/markdown-paragraph'
+import { FileAttachmentExtension } from '~/extensions/file-attachment'
 import type { DailyRead } from '~/components/daily-reads/DailyReadsTable.vue'
 
 definePageMeta({
@@ -130,6 +132,7 @@ function startQuiz() {
         content-type="markdown"
         readonly
         :editable="false"
+        :extensions="[MarkdownParagraphExtension, FileAttachmentExtension]"
         class="custom-prose"
         :ui="{
           content: 'p-0'

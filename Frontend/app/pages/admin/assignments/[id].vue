@@ -4,6 +4,7 @@ import type { TableColumn } from '@nuxt/ui'
 import { $authedFetch, handleResponseError, useAuth } from '~/apis/api'
 import { usePaging } from '~/apis/paging'
 import DashboardNavbar from '~/components/layout/DashboardNavbar.vue'
+import { MarkdownParagraphExtension } from '~/extensions/markdown-paragraph'
 import { FileReferenceExtension } from '~/extensions/file-reference'
 import { FileAttachmentExtension } from '~/extensions/file-attachment'
 
@@ -257,7 +258,8 @@ const submissionColumns: TableColumn<SubmissionListItem>[] = [
                 <UEditor
                   :model-value="assignment.description"
                   content-type="markdown"
-                  :extensions="[FileReferenceExtension, FileAttachmentExtension]"
+                  :starter-kit="{ paragraph: false }"
+                  :extensions="[MarkdownParagraphExtension, FileReferenceExtension, FileAttachmentExtension]"
                   readonly
                   :editable="false"
                   class="custom-prose"

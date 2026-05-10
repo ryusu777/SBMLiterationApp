@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { $authedFetch, handleResponseError } from '~/apis/api'
+import { MarkdownParagraphExtension } from '~/extensions/markdown-paragraph'
 import { FileAttachmentExtension } from '~/extensions/file-attachment'
 
 definePageMeta({
@@ -283,7 +284,7 @@ async function toggleComplete() {
                   :model-value="assignment.description"
                   content-type="markdown"
                   readonly
-                  :extensions="[FileAttachmentExtension]"
+                  :extensions="[MarkdownParagraphExtension, FileAttachmentExtension]"
                   :editable="false"
                   class="custom-prose"
                   :ui="{

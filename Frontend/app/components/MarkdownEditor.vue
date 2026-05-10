@@ -4,6 +4,7 @@ import type { EditorToolbarItem } from '@nuxt/ui'
 import type { EditorView } from '@tiptap/pm/view'
 import type { Editor as TiptapEditor } from '@tiptap/core'
 import type { ShallowRef } from 'vue'
+import { MarkdownParagraphExtension } from '~/extensions/markdown-paragraph'
 import { FileAttachmentExtension } from '~/extensions/file-attachment'
 
 interface UploadResult {
@@ -327,7 +328,7 @@ const toolbarItems: EditorToolbarItem[][] = [
       :config="{
         extensions: ['starter-kit', 'image']
       }"
-      :extensions="[FileAttachmentExtension]"
+      :extensions="[MarkdownParagraphExtension, FileAttachmentExtension]"
       class="w-full min-h-64 border border-gray-300 dark:border-gray-700 rounded-md"
       :ui="{
         content: 'py-4'

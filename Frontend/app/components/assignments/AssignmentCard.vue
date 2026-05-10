@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { MarkdownParagraphExtension } from '~/extensions/markdown-paragraph'
 import { FileAttachmentExtension } from '~/extensions/file-attachment'
 
 export interface AssignmentItem {
@@ -82,7 +83,7 @@ function stripHtml(html: string): string {
             :editable="false"
             content-type="markdown"
             :config="{ extensions: ['starter-kit', 'image'] }"
-            :extensions="[FileAttachmentExtension]"
+            :extensions="[MarkdownParagraphExtension, FileAttachmentExtension]"
             :model-value="stripHtml(assignment.description)"
           />
           <div class="flex justify-between items-center gap-3 mt-2 flex-wrap">
@@ -152,6 +153,7 @@ function stripHtml(html: string): string {
   max-width: 100%;
   word-break: break-word;
   display: -webkit-box;
+  line-clamp: 2;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
 }
