@@ -38,6 +38,21 @@ const state = reactive({
   dueDate: ''
 })
 
+function toLocalDateTimeInputValue(utcDateString?: string) {
+  if (!utcDateString) return ''
+
+  const date = new Date(utcDateString)
+  if (Number.isNaN(date.getTime())) return ''
+
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  const hours = String(date.getHours()).padStart(2, '0')
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+
+  return `${year}-${month}-${day}T${hours}:${minutes}`
+}
+
 const editorRenderKey = ref(0)
 const pending = ref(false)
 const formLoading = ref(false)
@@ -50,7 +65,7 @@ async function fetchAssignment() {
     if (response.data) {
       state.title = response.data.title
       state.description = response.data.description || ''
-      state.dueDate = response.data.dueDate ? response.data.dueDate.slice(0, 16) : ''
+      state.dueDate = toLocalDateTimeInputValue(response.data.dueDate)
       editorRenderKey.value++
     } else {
       handleResponseError(response)
