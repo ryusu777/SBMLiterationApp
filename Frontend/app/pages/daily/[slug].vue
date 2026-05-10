@@ -132,6 +132,7 @@ function startQuiz() {
         content-type="markdown"
         readonly
         :editable="false"
+        :starter-kit="{ paragraph: false }"
         :extensions="[MarkdownParagraphExtension, FileAttachmentExtension]"
         class="custom-prose"
         :ui="{

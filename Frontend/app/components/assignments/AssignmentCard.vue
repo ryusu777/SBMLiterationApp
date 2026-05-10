@@ -83,6 +83,7 @@ function stripHtml(html: string): string {
             :editable="false"
             content-type="markdown"
             :config="{ extensions: ['starter-kit', 'image'] }"
+            :starter-kit="{ paragraph: false }"
             :extensions="[MarkdownParagraphExtension, FileAttachmentExtension]"
             :model-value="stripHtml(assignment.description)"
           />

@@ -328,6 +328,7 @@ const toolbarItems: EditorToolbarItem[][] = [
       :config="{
         extensions: ['starter-kit', 'image']
       }"
+      :starter-kit="{ paragraph: false }"
       :extensions="[MarkdownParagraphExtension, FileAttachmentExtension]"
       class="w-full min-h-64 border border-gray-300 dark:border-gray-700 rounded-md"
       :ui="{

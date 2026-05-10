@@ -284,6 +284,7 @@ async function toggleComplete() {
                   :model-value="assignment.description"
                   content-type="markdown"
                   readonly
+                  :starter-kit="{ paragraph: false }"
                   :extensions="[MarkdownParagraphExtension, FileAttachmentExtension]"
                   :editable="false"
                   class="custom-prose"
